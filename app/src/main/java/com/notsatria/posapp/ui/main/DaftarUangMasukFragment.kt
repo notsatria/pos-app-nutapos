@@ -73,7 +73,19 @@ class DaftarUangMasukFragment : Fragment() {
 
         showUangMasukRvPortrait(transactions)
 
+        binding.btnBuatTransaksi!!.setOnClickListener {
+            goToFragmentInputUangMasuk()
+        }
+
         return binding.root
+    }
+
+    private fun goToFragmentInputUangMasuk() {
+        val fragmentB = InputUangMasukFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragmentB)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun showUangMasukRvPortrait(transactionList: List<Transaction>) {
