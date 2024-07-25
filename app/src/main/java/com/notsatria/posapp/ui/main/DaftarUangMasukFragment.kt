@@ -15,6 +15,7 @@ import com.notsatria.posapp.models.Item
 import com.notsatria.posapp.models.Transaction
 import com.notsatria.posapp.ui.adapter.DaftarUangMasukAdapter
 import com.notsatria.posapp.ui.adapter.TableAdapter
+import com.notsatria.posapp.utils.formatRupiah
 
 
 class DaftarUangMasukFragment : Fragment() {
@@ -27,7 +28,7 @@ class DaftarUangMasukFragment : Fragment() {
             "Kasir Perangkat 1",
             "Bos",
             "Tambahan modal",
-            "Rp 100.000",
+            100000,
             "25 Maret 2024"
         ),
         Transaction(
@@ -35,7 +36,7 @@ class DaftarUangMasukFragment : Fragment() {
             "Kasir Perangkat 1",
             "Bos",
             "Tambahan modal",
-            "Rp 100.000",
+            100000,
             "25 Maret 2024"
         ),
         Transaction(
@@ -43,7 +44,7 @@ class DaftarUangMasukFragment : Fragment() {
             "Kasir Perangkat 1",
             "Bos",
             "Tambahan modal",
-            "Rp 100.000",
+            100000,
             "26 Maret 2024"
         ),
         Transaction(
@@ -51,9 +52,17 @@ class DaftarUangMasukFragment : Fragment() {
             "Kasir Perangkat 1",
             "Bos",
             "Tambahan modal",
-            "Rp 100.000",
+            100000,
             "26 Maret 2024"
-        )
+        ),
+        Transaction(
+            "19:00:20",
+            "Kasir Perangkat 1",
+            "Bos",
+            "Tambahan modal",
+            100000,
+            "27 Maret 2024"
+        ),
     )
 
     override fun onCreateView(
@@ -77,7 +86,8 @@ class DaftarUangMasukFragment : Fragment() {
                 false
             )
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                adapter = DaftarUangMasukAdapter(transactionList)
+                val data = mapTransactionsToDaftarUangMasuk(transactionList)
+                adapter = DaftarUangMasukAdapter(data)
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 val data = mapTransactionsToTableData(transactionList)
                 adapter = TableAdapter(data)
@@ -92,20 +102,20 @@ class DaftarUangMasukFragment : Fragment() {
         var currentTotal = 0
 
         transactions.forEach { transaction ->
-            // Add a new header if the date is different
+            // Tambah header baru jika ada tanggal yang berbeda
             if (currentHeader?.date != transaction.date) {
                 currentHeader?.let {
-                    // Add the footer for the previous date
+                    // Tambahkan footer untuk tanggal yang sama
                     data.add(Footer("Rp ${currentTotal}"))
                 }
-                currentHeader = Header(transaction.date)
+                currentHeader = Header(transaction.date, currentTotal)
                 currentHeader?.let {
                     data.add(it)
                 }
-                currentTotal = 0 // Reset the total for the new date
+                currentTotal = 0 // Reset total
             }
 
-            // Add the transaction as an item
+            // Map transaction menjadi item
             val item = Item(
                 time = transaction.time,
                 to = transaction.to,
@@ -115,13 +125,45 @@ class DaftarUangMasukFragment : Fragment() {
             )
             data.add(item)
 
-            // Update the total for the current date
-            currentTotal += transaction.amount.replace("Rp ", "").replace(".", "").toInt()
+            // Update total berdasarkan tanggal sekarang
+            currentTotal += transaction.amount
         }
 
-        // Add the footer for the last date
+        // Tambahkan footer untuk tanggal terakhir
         currentHeader?.let {
-            data.add(Footer("Rp ${currentTotal}"))
+            data.add(Footer(formatRupiah(currentTotal)))
+        }
+
+        return data
+    }
+
+    private fun mapTransactionsToDaftarUangMasuk(transactions: List<Transaction>): List<Any> {
+        val data = mutableListOf<Any>()
+        var currentHeader: Header? = null
+        var currentTotal = 0
+
+        transactions.forEach { transaction ->
+            // Tambah header baru jika ada tanggal yang berbeda
+            if (currentHeader?.date != transaction.date) {
+                // Tambahkan header baru
+                currentHeader = Header(transaction.date, currentTotal)
+                data.add(currentHeader!!)
+                currentTotal = 0 // Reset total untuk tanggal baru
+            }
+
+            // Map transaction menjadi item
+            val item = Item(
+                time = transaction.time,
+                to = transaction.to,
+                from = transaction.from,
+                description = transaction.description,
+                amount = transaction.amount
+            )
+            data.add(item)
+
+            // Update total berdasarkan tanggal sekarang
+            currentTotal += transaction.amount
+            currentHeader?.amount = currentTotal // Update total pada header
         }
 
         return data

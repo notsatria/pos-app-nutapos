@@ -9,6 +9,7 @@ import com.notsatria.posapp.R
 import com.notsatria.posapp.models.Footer
 import com.notsatria.posapp.models.Header
 import com.notsatria.posapp.models.Item
+import com.notsatria.posapp.utils.formatRupiah
 
 class TableAdapter(private val data: List<Any>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -31,19 +32,19 @@ class TableAdapter(private val data: List<Any>) : RecyclerView.Adapter<RecyclerV
         return when (viewType) {
             TYPE_HEADER -> {
                 val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.layout_header, parent, false)
+                    .inflate(R.layout.layout_header_land, parent, false)
                 HeaderViewHolder(view)
             }
 
             TYPE_ITEM -> {
                 val view =
-                    LayoutInflater.from(parent.context).inflate(R.layout.layout_item, parent, false)
+                    LayoutInflater.from(parent.context).inflate(R.layout.layout_item_land, parent, false)
                 ItemViewHolder(view)
             }
 
             TYPE_FOOTER -> {
                 val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.layout_footer, parent, false)
+                    .inflate(R.layout.layout_footer_land, parent, false)
                 FooterViewHolder(view)
             }
 
@@ -79,7 +80,7 @@ class TableAdapter(private val data: List<Any>) : RecyclerView.Adapter<RecyclerV
             tvMasukKe.text = item.to
             tvTerimaDari.text = item.from
             tvKeterangan.text = item.description
-            tvJumlah.text = item.amount
+            tvJumlah.text = formatRupiah(item.amount)
         }
     }
 
