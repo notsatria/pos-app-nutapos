@@ -11,7 +11,8 @@ import com.notsatria.posapp.utils.formatRupiah
 
 class DaftarUangMasukAdapter(
     private val data: List<Any>,
-    private val onDeleteClickListener: (Int) -> Unit
+    private val onDeleteClickListener: (Int) -> Unit,
+    private val onEditClickListener: (Item) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -77,6 +78,10 @@ class DaftarUangMasukAdapter(
                 btnDelete.setOnClickListener {
                     onDeleteClickListener(item.id)
                     notifyItemRemoved(adapterPosition)
+                }
+
+                btnEdit.setOnClickListener {
+                    onEditClickListener(item)
                 }
             }
         }

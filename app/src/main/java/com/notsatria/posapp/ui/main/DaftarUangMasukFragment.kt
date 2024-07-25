@@ -16,6 +16,7 @@ import com.notsatria.posapp.models.Header
 import com.notsatria.posapp.models.Item
 import com.notsatria.posapp.ui.adapter.DaftarUangMasukAdapter
 import com.notsatria.posapp.ui.adapter.TableAdapter
+import com.notsatria.posapp.ui.inputuangmasuk.EditUangMasukFragment
 import com.notsatria.posapp.ui.inputuangmasuk.InputUangMasukFragment
 import com.notsatria.posapp.utils.Converters
 import com.notsatria.posapp.utils.ViewModelFactory
@@ -72,6 +73,29 @@ class DaftarUangMasukFragment : Fragment() {
             .commit()
     }
 
+    private fun goToFragmentInputUangMasukWithData(item: Item) {
+        val fragment = EditUangMasukFragment().apply {
+            arguments = Bundle().apply {
+                putInt("id", item.id)
+                putString("time", item.time)
+                putString("to", item.to)
+                putString("from", item.from)
+                putString("description", item.description)
+                putInt("amount", item.amount)
+                putString("type", item.type)
+            }
+        }
+
+        parentFragmentManager.beginTransaction()
+            .replace(
+                R.id.fragment_container,
+                fragment,
+                EditUangMasukFragment::class.java.simpleName
+            )
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun showUangMasukRvPortrait(transactionList: List<TransactionEntity>) {
         val orientation = resources.configuration.orientation
 
@@ -83,9 +107,11 @@ class DaftarUangMasukFragment : Fragment() {
             )
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                 val data = mapTransactionsToDaftarUangMasuk(transactionList)
-                val rvAdapter = DaftarUangMasukAdapter(data) { itemId ->
+                val rvAdapter = DaftarUangMasukAdapter(data, onDeleteClickListener = { itemId ->
                     viewModel.deleteTransaction(itemId)
-                }
+                }, onEditClickListener = { item ->
+                    goToFragmentInputUangMasukWithData(item)
+                })
 
                 adapter = rvAdapter
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -122,7 +148,8 @@ class DaftarUangMasukFragment : Fragment() {
                 to = transaction.to!!,
                 from = transaction.from!!,
                 description = transaction.description!!,
-                amount = transaction.amount
+                amount = transaction.amount,
+                type = transaction.type!!,
             )
             data.add(item)
 
@@ -159,7 +186,8 @@ class DaftarUangMasukFragment : Fragment() {
                 to = transaction.to!!,
                 from = transaction.from!!,
                 description = transaction.description!!,
-                amount = transaction.amount
+                amount = transaction.amount,
+                type = transaction.type!!,
             )
             data.add(item)
 

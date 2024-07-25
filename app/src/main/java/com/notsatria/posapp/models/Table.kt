@@ -7,7 +7,8 @@ data class Item(
     val to: String,
     val from: String,
     val description: String,
-    val amount: Int
+    val amount: Int,
+    val type: String,
 )
 
 data class Footer(val total: String)

@@ -27,6 +27,12 @@ class TransactionRepository private constructor(
         }
     }
 
+    fun updateTransaction(transaction: TransactionEntity) {
+        appExecutors.diskIO.execute {
+            dao.update(transaction)
+        }
+    }
+
     companion object {
         fun getInstance(
             dao: TransactionDao,
