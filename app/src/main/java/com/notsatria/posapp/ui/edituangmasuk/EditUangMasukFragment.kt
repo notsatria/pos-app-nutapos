@@ -1,4 +1,4 @@
-package com.notsatria.posapp.ui.inputuangmasuk
+package com.notsatria.posapp.ui.edituangmasuk
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.notsatria.posapp.R
 import com.notsatria.posapp.data.local.entity.TransactionEntity
 import com.notsatria.posapp.databinding.FragmentInputUangMasukBinding
+import com.notsatria.posapp.ui.inputuangmasuk.InputUangMasukViewModel
 import com.notsatria.posapp.utils.ViewModelFactory
 import com.notsatria.posapp.utils.getCurrentTime
 import java.util.Date
@@ -21,7 +22,7 @@ class EditUangMasukFragment : Fragment() {
     private var _binding: FragmentInputUangMasukBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel by viewModels<InputUangMasukViewModel> {
+    private val viewModel by viewModels<EditUangMasukViewModel> {
         ViewModelFactory.getInstance(requireContext())
     }
 
@@ -38,7 +39,6 @@ class EditUangMasukFragment : Fragment() {
             }
 
 
-            // Retrieve data from arguments
             val args = arguments
             val id = args!!.getInt("id", -1)
 
@@ -75,6 +75,7 @@ class EditUangMasukFragment : Fragment() {
                         if (dari.isNotEmpty() && masukKe.isNotEmpty() && jumlah.isNotEmpty() && keterangan.isNotEmpty() && jenis.isNotEmpty()) {
                             try {
                                 val transaction = TransactionEntity(
+                                    id = id,
                                     time = getCurrentTime(),
                                     to = masukKe,
                                     type = jenis,

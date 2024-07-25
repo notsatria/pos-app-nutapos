@@ -27,8 +27,8 @@ class TransactionRepository private constructor(
         }
     }
 
-    fun updateTransaction(transaction: TransactionEntity) {
-        appExecutors.diskIO.execute {
+    suspend fun updateTransaction(transaction: TransactionEntity) {
+        withContext(Dispatchers.IO) {
             dao.update(transaction)
         }
     }

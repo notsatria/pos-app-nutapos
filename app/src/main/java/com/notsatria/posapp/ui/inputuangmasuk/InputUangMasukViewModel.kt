@@ -32,6 +32,4 @@ class InputUangMasukViewModel(private val repository: TransactionRepository) : V
             repository.insertTransaction(transactionEntity)
         }
     }
-
-    fun updateTransaction(transaction: TransactionEntity) = repository.updateTransaction(transaction)
 }
