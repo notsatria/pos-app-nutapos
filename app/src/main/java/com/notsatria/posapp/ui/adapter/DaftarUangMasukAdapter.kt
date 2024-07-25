@@ -7,7 +7,6 @@ import com.notsatria.posapp.databinding.ItemUangMasukCardBinding
 import com.notsatria.posapp.databinding.LayoutHeaderPotraitBinding
 import com.notsatria.posapp.models.Header
 import com.notsatria.posapp.models.Item
-import com.notsatria.posapp.models.Transaction
 import com.notsatria.posapp.utils.formatRupiah
 
 class DaftarUangMasukAdapter(private val data: List<Any>) :

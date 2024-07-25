@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.InputUangMasukFragment">
+    tools:context=".ui.inputuangmasuk.InputUangMasukFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -44,6 +44,7 @@
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="20dp"
                     android:ems="10"
+                    android:text="Kasir Perangkat 1"
                     android:hint="Masuk Ke"
                     android:inputType="text" />
 

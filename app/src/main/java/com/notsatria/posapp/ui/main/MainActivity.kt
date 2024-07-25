@@ -5,10 +5,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
 import com.notsatria.posapp.R
 import com.notsatria.posapp.databinding.ActivityMainBinding
-import com.notsatria.posapp.models.Transaction
 
 class MainActivity : AppCompatActivity() {
 

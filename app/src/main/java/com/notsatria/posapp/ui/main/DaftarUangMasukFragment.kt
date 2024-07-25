@@ -6,15 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.notsatria.posapp.R
+import com.notsatria.posapp.data.local.entity.TransactionEntity
 import com.notsatria.posapp.databinding.FragmentDaftarUangMasukBinding
 import com.notsatria.posapp.models.Footer
 import com.notsatria.posapp.models.Header
 import com.notsatria.posapp.models.Item
-import com.notsatria.posapp.models.Transaction
 import com.notsatria.posapp.ui.adapter.DaftarUangMasukAdapter
 import com.notsatria.posapp.ui.adapter.TableAdapter
+import com.notsatria.posapp.ui.inputuangmasuk.InputUangMasukFragment
+import com.notsatria.posapp.utils.ViewModelFactory
 import com.notsatria.posapp.utils.formatRupiah
 
 
@@ -22,48 +25,11 @@ class DaftarUangMasukFragment : Fragment() {
     private var _binding: FragmentDaftarUangMasukBinding? = null
     private val binding get() = _binding!!
 
-    private val transactions: List<Transaction> = listOf(
-        Transaction(
-            "19:00:20",
-            "Kasir Perangkat 1",
-            "Bos",
-            "Tambahan modal",
-            100000,
-            "25 Maret 2024"
-        ),
-        Transaction(
-            "19:00:20",
-            "Kasir Perangkat 1",
-            "Bos",
-            "Tambahan modal",
-            100000,
-            "25 Maret 2024"
-        ),
-        Transaction(
-            "19:00:20",
-            "Kasir Perangkat 1",
-            "Bos",
-            "Tambahan modal",
-            100000,
-            "26 Maret 2024"
-        ),
-        Transaction(
-            "19:00:20",
-            "Kasir Perangkat 1",
-            "Bos",
-            "Tambahan modal",
-            100000,
-            "26 Maret 2024"
-        ),
-        Transaction(
-            "19:00:20",
-            "Kasir Perangkat 1",
-            "Bos",
-            "Tambahan modal",
-            100000,
-            "27 Maret 2024"
-        ),
-    )
+    private val viewModel by viewModels<DaftarUangMasukViewModel> {
+        ViewModelFactory.getInstance(
+            requireContext()
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,7 +37,16 @@ class DaftarUangMasukFragment : Fragment() {
     ): View? {
         _binding = FragmentDaftarUangMasukBinding.inflate(inflater, container, false)
 
-        showUangMasukRvPortrait(transactions)
+
+        viewModel.getAllTransactions().observe(viewLifecycleOwner) { it ->
+            if (it.isEmpty()) {
+                binding.tvEmpty!!.visibility = View.VISIBLE
+                binding.tvEmpty!!.text = "Data Kosong"
+            } else {
+                binding.tvEmpty!!.visibility = View.GONE
+                showUangMasukRvPortrait(it)
+            }
+        }
 
         binding.btnBuatTransaksi!!.setOnClickListener {
             goToFragmentInputUangMasuk()
@@ -92,7 +67,7 @@ class DaftarUangMasukFragment : Fragment() {
             .commit()
     }
 
-    private fun showUangMasukRvPortrait(transactionList: List<Transaction>) {
+    private fun showUangMasukRvPortrait(transactionList: List<TransactionEntity>) {
         val orientation = resources.configuration.orientation
 
         binding.rvDaftarUangMasuk!!.apply {
@@ -112,19 +87,19 @@ class DaftarUangMasukFragment : Fragment() {
         }
     }
 
-    private fun mapTransactionsToTableData(transactions: List<Transaction>): List<Any> {
+    private fun mapTransactionsToTableData(transactions: List<TransactionEntity>): List<Any> {
         val data = mutableListOf<Any>()
         var currentHeader: Header? = null
         var currentTotal = 0
 
         transactions.forEach { transaction ->
             // Tambah header baru jika ada tanggal yang berbeda
-            if (currentHeader?.date != transaction.date) {
+            if (currentHeader?.date != transaction.date.toString()) {
                 currentHeader?.let {
                     // Tambahkan footer untuk tanggal yang sama
                     data.add(Footer("Rp ${currentTotal}"))
                 }
-                currentHeader = Header(transaction.date, currentTotal)
+                currentHeader = Header(transaction.date.toString(), currentTotal)
                 currentHeader?.let {
                     data.add(it)
                 }
@@ -133,10 +108,10 @@ class DaftarUangMasukFragment : Fragment() {
 
             // Map transaction menjadi item
             val item = Item(
-                time = transaction.time,
-                to = transaction.to,
-                from = transaction.from,
-                description = transaction.description,
+                time = transaction.time!!,
+                to = transaction.to!!,
+                from = transaction.from!!,
+                description = transaction.description!!,
                 amount = transaction.amount
             )
             data.add(item)
@@ -153,26 +128,26 @@ class DaftarUangMasukFragment : Fragment() {
         return data
     }
 
-    private fun mapTransactionsToDaftarUangMasuk(transactions: List<Transaction>): List<Any> {
+    private fun mapTransactionsToDaftarUangMasuk(transactions: List<TransactionEntity>): List<Any> {
         val data = mutableListOf<Any>()
         var currentHeader: Header? = null
         var currentTotal = 0
 
         transactions.forEach { transaction ->
             // Tambah header baru jika ada tanggal yang berbeda
-            if (currentHeader?.date != transaction.date) {
+            if (currentHeader?.date != transaction.date.toString()) {
                 // Tambahkan header baru
-                currentHeader = Header(transaction.date, currentTotal)
+                currentHeader = Header(transaction.date.toString(), currentTotal)
                 data.add(currentHeader!!)
                 currentTotal = 0 // Reset total untuk tanggal baru
             }
 
             // Map transaction menjadi item
             val item = Item(
-                time = transaction.time,
-                to = transaction.to,
-                from = transaction.from,
-                description = transaction.description,
+                time = transaction.time!!,
+                to = transaction.to!!,
+                from = transaction.from!!,
+                description = transaction.description!!,
                 amount = transaction.amount
             )
             data.add(item)
