@@ -81,9 +81,13 @@ class DaftarUangMasukFragment : Fragment() {
     }
 
     private fun goToFragmentInputUangMasuk() {
-        val fragmentB = InputUangMasukFragment()
+        val fragment = InputUangMasukFragment()
         parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragmentB)
+            .replace(
+                R.id.fragment_container,
+                fragment,
+                InputUangMasukFragment::class.java.simpleName
+            )
             .addToBackStack(null)
             .commit()
     }

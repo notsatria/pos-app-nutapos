@@ -23,7 +23,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:title="Uang Masuk"
-            app:titleTextAppearance="@style/Inter.Bold" />
+            style="@style/Inter.Bold" />
 
         <TextView
             android:id="@+id/tvDateRange"

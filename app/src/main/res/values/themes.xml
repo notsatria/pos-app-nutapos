@@ -52,6 +52,10 @@
 
     <style name="Theme.POSApp" parent="AppTheme" />
 
+    <style name="rounded">
+        <item name="cornerSize">10%</item>
+    </style>
+
     <style name="Inter">
         <item name="android:fontFamily">@font/inter_regular</item>
         <item name="android:textSize">14sp</item>
