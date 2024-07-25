@@ -1,60 +1,135 @@
 package com.notsatria.posapp.ui.main
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.notsatria.posapp.R
+import com.notsatria.posapp.databinding.FragmentDaftarUangMasukBinding
+import com.notsatria.posapp.models.Footer
+import com.notsatria.posapp.models.Header
+import com.notsatria.posapp.models.Item
+import com.notsatria.posapp.models.Transaction
+import com.notsatria.posapp.ui.adapter.DaftarUangMasukAdapter
+import com.notsatria.posapp.ui.adapter.TableAdapter
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DaftarUangMasukFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class DaftarUangMasukFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentDaftarUangMasukBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private val transactions: List<Transaction> = listOf(
+        Transaction(
+            "19:00:20",
+            "Kasir Perangkat 1",
+            "Bos",
+            "Tambahan modal",
+            "Rp 100.000",
+            "25 Maret 2024"
+        ),
+        Transaction(
+            "19:00:20",
+            "Kasir Perangkat 1",
+            "Bos",
+            "Tambahan modal",
+            "Rp 100.000",
+            "25 Maret 2024"
+        ),
+        Transaction(
+            "19:00:20",
+            "Kasir Perangkat 1",
+            "Bos",
+            "Tambahan modal",
+            "Rp 100.000",
+            "26 Maret 2024"
+        ),
+        Transaction(
+            "19:00:20",
+            "Kasir Perangkat 1",
+            "Bos",
+            "Tambahan modal",
+            "Rp 100.000",
+            "26 Maret 2024"
+        )
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_daftar_uang_masuk, container, false)
+        _binding = FragmentDaftarUangMasukBinding.inflate(inflater, container, false)
+
+        showUangMasukRvPortrait(transactions)
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DaftarUangMasukFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DaftarUangMasukFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun showUangMasukRvPortrait(transactionList: List<Transaction>) {
+        val orientation = resources.configuration.orientation
+
+        binding.rvDaftarUangMasuk!!.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                adapter = DaftarUangMasukAdapter(transactionList)
+            } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                val data = mapTransactionsToTableData(transactionList)
+                adapter = TableAdapter(data)
             }
+
+        }
+    }
+
+    private fun mapTransactionsToTableData(transactions: List<Transaction>): List<Any> {
+        val data = mutableListOf<Any>()
+        var currentHeader: Header? = null
+        var currentTotal = 0
+
+        transactions.forEach { transaction ->
+            // Add a new header if the date is different
+            if (currentHeader?.date != transaction.date) {
+                currentHeader?.let {
+                    // Add the footer for the previous date
+                    data.add(Footer("Rp ${currentTotal}"))
+                }
+                currentHeader = Header(transaction.date)
+                currentHeader?.let {
+                    data.add(it)
+                }
+                currentTotal = 0 // Reset the total for the new date
+            }
+
+            // Add the transaction as an item
+            val item = Item(
+                time = transaction.time,
+                to = transaction.to,
+                from = transaction.from,
+                description = transaction.description,
+                amount = transaction.amount
+            )
+            data.add(item)
+
+            // Update the total for the current date
+            currentTotal += transaction.amount.replace("Rp ", "").replace(".", "").toInt()
+        }
+
+        // Add the footer for the last date
+        currentHeader?.let {
+            data.add(Footer("Rp ${currentTotal}"))
+        }
+
+        return data
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

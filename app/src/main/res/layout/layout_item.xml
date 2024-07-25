@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginHorizontal="20dp"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tvWaktu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="19:00:20" />
+
+    <TextView
+        android:id="@+id/tvMasukKe"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="Kasir Perangkat 1" />
+
+    <TextView
+        android:id="@+id/tvTerimaDari"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="Bos" />
+
+    <TextView
+        android:id="@+id/tvKeterangan"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="Tambahan modal" />
+
+    <TextView
+        android:id="@+id/tvJumlah"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Rp 100.000" />
+</LinearLayout>
