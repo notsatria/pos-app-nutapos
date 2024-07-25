@@ -9,7 +9,10 @@ import com.notsatria.posapp.models.Header
 import com.notsatria.posapp.models.Item
 import com.notsatria.posapp.utils.formatRupiah
 
-class DaftarUangMasukAdapter(private val data: List<Any>) :
+class DaftarUangMasukAdapter(
+    private val data: List<Any>,
+    private val onDeleteClickListener: (Int) -> Unit
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -70,6 +73,11 @@ class DaftarUangMasukAdapter(private val data: List<Any>) :
                 tvJam.text = item.time
                 tvJumlah.text = formatRupiah(item.amount)
                 tvKeterangan.text = item.description
+
+                btnDelete.setOnClickListener {
+                    onDeleteClickListener(item.id)
+                    notifyItemRemoved(adapterPosition)
+                }
             }
         }
     }

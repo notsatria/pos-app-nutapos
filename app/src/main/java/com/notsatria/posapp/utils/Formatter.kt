@@ -23,11 +23,9 @@ fun getCurrentTime(): String {
     return currentTime.format(formatter)
 }
 
-// Mendapatkan date sekarang
-fun getCurrentDate(): Date {
-    val calendar = Calendar.getInstance()
-    val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-    val formattedDate = simpleDateFormat.format(calendar.time)
-
-    return simpleDateFormat.parse(formattedDate)!!
+// Convert timestamp ke String
+fun convertTimestampToString(timestamp: Long, format: String = "dd-MM-yyyy"): String {
+    val sdf = SimpleDateFormat(format, Locale.getDefault())
+    val date = Date(timestamp)
+    return sdf.format(date)
 }

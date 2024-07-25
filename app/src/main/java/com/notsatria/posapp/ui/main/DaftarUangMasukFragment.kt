@@ -17,7 +17,9 @@ import com.notsatria.posapp.models.Item
 import com.notsatria.posapp.ui.adapter.DaftarUangMasukAdapter
 import com.notsatria.posapp.ui.adapter.TableAdapter
 import com.notsatria.posapp.ui.inputuangmasuk.InputUangMasukFragment
+import com.notsatria.posapp.utils.Converters
 import com.notsatria.posapp.utils.ViewModelFactory
+import com.notsatria.posapp.utils.convertTimestampToString
 import com.notsatria.posapp.utils.formatRupiah
 
 
@@ -40,15 +42,18 @@ class DaftarUangMasukFragment : Fragment() {
 
         viewModel.getAllTransactions().observe(viewLifecycleOwner) { it ->
             if (it.isEmpty()) {
+                binding.rvDaftarUangMasuk.visibility = View.GONE
                 binding.tvEmpty!!.visibility = View.VISIBLE
                 binding.tvEmpty!!.text = "Data Kosong"
             } else {
+                println("Data: $it")
+                binding.rvDaftarUangMasuk.visibility = View.VISIBLE
                 binding.tvEmpty!!.visibility = View.GONE
                 showUangMasukRvPortrait(it)
             }
         }
 
-        binding.btnBuatTransaksi!!.setOnClickListener {
+        binding.btnBuatTransaksi?.setOnClickListener {
             goToFragmentInputUangMasuk()
         }
 
@@ -78,14 +83,18 @@ class DaftarUangMasukFragment : Fragment() {
             )
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                 val data = mapTransactionsToDaftarUangMasuk(transactionList)
-                adapter = DaftarUangMasukAdapter(data)
+                val rvAdapter = DaftarUangMasukAdapter(data) { itemId ->
+                    viewModel.deleteTransaction(itemId)
+                }
+
+                adapter = rvAdapter
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 val data = mapTransactionsToTableData(transactionList)
                 adapter = TableAdapter(data)
             }
-
         }
     }
+
 
     private fun mapTransactionsToTableData(transactions: List<TransactionEntity>): List<Any> {
         val data = mutableListOf<Any>()
@@ -94,12 +103,12 @@ class DaftarUangMasukFragment : Fragment() {
 
         transactions.forEach { transaction ->
             // Tambah header baru jika ada tanggal yang berbeda
-            if (currentHeader?.date != transaction.date.toString()) {
+            if (currentHeader?.date != convertTimestampToString(transaction.date!!)) {
                 currentHeader?.let {
                     // Tambahkan footer untuk tanggal yang sama
                     data.add(Footer("Rp ${currentTotal}"))
                 }
-                currentHeader = Header(transaction.date.toString(), currentTotal)
+                currentHeader = Header(convertTimestampToString(transaction.date!!), currentTotal)
                 currentHeader?.let {
                     data.add(it)
                 }
@@ -108,6 +117,7 @@ class DaftarUangMasukFragment : Fragment() {
 
             // Map transaction menjadi item
             val item = Item(
+                id = transaction.id,
                 time = transaction.time!!,
                 to = transaction.to!!,
                 from = transaction.from!!,
@@ -135,15 +145,16 @@ class DaftarUangMasukFragment : Fragment() {
 
         transactions.forEach { transaction ->
             // Tambah header baru jika ada tanggal yang berbeda
-            if (currentHeader?.date != transaction.date.toString()) {
+            if (currentHeader?.date != convertTimestampToString(transaction.date!!)) {
                 // Tambahkan header baru
-                currentHeader = Header(transaction.date.toString(), currentTotal)
+                currentHeader = Header(convertTimestampToString(transaction.date!!), currentTotal)
                 data.add(currentHeader!!)
                 currentTotal = 0 // Reset total untuk tanggal baru
             }
 
             // Map transaction menjadi item
             val item = Item(
+                id = transaction.id,
                 time = transaction.time!!,
                 to = transaction.to!!,
                 from = transaction.from!!,

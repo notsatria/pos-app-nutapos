@@ -12,13 +12,13 @@ import com.notsatria.posapp.data.local.entity.TransactionEntity
 @Dao
 interface TransactionDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(note: TransactionEntity)
+    suspend fun insert(transaction: TransactionEntity)
 
     @Update
-    fun update(note: TransactionEntity)
+    fun update(transaction: TransactionEntity)
 
-    @Delete
-    fun delete(note: TransactionEntity)
+    @Query("DELETE FROM `transaction` WHERE id = :transactionId")
+    fun deleteTransactionById(transactionId: Int)
 
     @Query("SELECT * from `transaction` ORDER BY date ASC")
     fun getAllTransactions(): LiveData<List<TransactionEntity>>

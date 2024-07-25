@@ -2,6 +2,7 @@ package com.notsatria.posapp.models
 
 data class Header(val date: String, var amount: Int?)
 data class Item(
+    var id: Int = 0,
     val time: String,
     val to: String,
     val from: String,

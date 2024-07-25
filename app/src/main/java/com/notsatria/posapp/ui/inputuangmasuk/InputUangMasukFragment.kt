@@ -13,7 +13,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.notsatria.posapp.R
 import com.notsatria.posapp.databinding.FragmentInputUangMasukBinding
 import com.notsatria.posapp.utils.ViewModelFactory
-import com.notsatria.posapp.utils.getCurrentDate
 import com.notsatria.posapp.utils.getCurrentTime
 import java.util.Date
 

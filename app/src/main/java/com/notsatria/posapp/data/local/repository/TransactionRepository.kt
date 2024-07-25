@@ -21,6 +21,12 @@ class TransactionRepository private constructor(
         return dao.getAllTransactions()
     }
 
+    fun deleteTransaction(transactionId: Int) {
+        appExecutors.diskIO.execute {
+            dao.deleteTransactionById(transactionId)
+        }
+    }
+
     companion object {
         fun getInstance(
             dao: TransactionDao,
