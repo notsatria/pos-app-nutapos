@@ -56,7 +56,6 @@ class DaftarUangMasukFragment : Fragment() {
     ): View? {
         _binding = FragmentDaftarUangMasukBinding.inflate(inflater, container, false)
 
-
         viewModel.getAllTransactions().observe(viewLifecycleOwner) { it ->
             if (it.isEmpty()) {
                 binding.rvDaftarUangMasuk.visibility = View.GONE
