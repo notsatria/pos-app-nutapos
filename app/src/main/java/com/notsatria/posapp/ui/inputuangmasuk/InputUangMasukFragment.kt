@@ -19,6 +19,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.notsatria.posapp.R
 import com.notsatria.posapp.databinding.DialogImageSourceBinding
 import com.notsatria.posapp.databinding.FragmentInputUangMasukBinding
+import com.notsatria.posapp.ui.components.BottomSheetFragment
 import com.notsatria.posapp.utils.ViewModelFactory
 import com.notsatria.posapp.utils.getCurrentTime
 import com.notsatria.posapp.utils.getImageUri
@@ -44,6 +45,10 @@ class InputUangMasukFragment : Fragment() {
         setupEditText()
         setupJenisClickListener()
         setupIvPhoto()
+
+        binding.btnLebihTahu.setOnClickListener {
+            showBottomSheet()
+        }
         return binding.root
     }
 
@@ -236,16 +241,21 @@ class InputUangMasukFragment : Fragment() {
     }
 
 
-private fun showImage() {
-    currentImageUri.let {
-        binding.ivPhoto.setImageURI(it)
+    private fun showImage() {
+        currentImageUri.let {
+            binding.ivPhoto.setImageURI(it)
+        }
+
+        setupEditAndDeletePhoto()
     }
 
-    setupEditAndDeletePhoto()
-}
+    private fun showBottomSheet() {
+        val bottomSheetFragment = BottomSheetFragment()
+        bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
+    }
 
-override fun onDestroyView() {
-    super.onDestroyView()
-    _binding = null
-}
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
