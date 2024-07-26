@@ -44,9 +44,9 @@
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="20dp"
                     android:ems="10"
-                    android:text="Kasir Perangkat 1"
                     android:hint="Masuk Ke"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:text="Kasir Perangkat 1" />
 
                 <EditText
                     android:id="@+id/etDari"
@@ -78,19 +78,44 @@
                     android:hint="Keterangan"
                     android:inputType="text" />
 
-                <EditText
-                    android:id="@+id/etJenis"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="24dp"
-                    android:clickable="true"
-                    android:cursorVisible="false"
-                    android:ems="10"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:hint="Jenis"
-                    android:inputType="none" />
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/etJenis"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:clickable="true"
+                        android:cursorVisible="false"
+                        android:drawableEnd="@drawable/ic_dropdown"
+                        android:ems="10"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="Jenis"
+                        android:inputType="none" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp"
+                        android:text="Lebih Tahu"
+                        android:textAppearance="@style/Inter.Bold"
+                        android:textColor="@color/blue"
+                        android:textSize="16sp" />
+
+
+                </LinearLayout>
+
 
                 <TextView
                     style="@style/Inter.SemiBold"
@@ -113,11 +138,13 @@
                         android:layout_height="100dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="16dp"
+                        android:scaleType="centerCrop"
                         android:clickable="true"
                         android:src="@drawable/ic_photo"
                         app:shapeAppearance="@style/rounded" />
 
                     <TextView
+                        android:id="@+id/btnChangeImage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -129,9 +156,11 @@
                         android:text="Ubah"
                         android:textAppearance="@style/Inter.Bold"
                         android:textColor="@color/blue"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:visibility="gone" />
 
                     <TextView
+                        android:id="@+id/btnDeleteImage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -143,7 +172,8 @@
                         android:text="Hapus"
                         android:textAppearance="@style/Inter.Bold"
                         android:textColor="@color/md_theme_error"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 

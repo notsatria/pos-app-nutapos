@@ -34,4 +34,7 @@ data class TransactionEntity(
 
     @ColumnInfo(name = "type")
     var type: String? = null,
+
+    @ColumnInfo(name = "image_uri")
+    val imageUri: String? = null,
 ) : Parcelable
