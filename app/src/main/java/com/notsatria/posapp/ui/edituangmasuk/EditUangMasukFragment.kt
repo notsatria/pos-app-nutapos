@@ -1,11 +1,18 @@
 package com.notsatria.posapp.ui.edituangmasuk
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.*
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,6 +22,7 @@ import com.notsatria.posapp.data.local.entity.TransactionEntity
 import com.notsatria.posapp.databinding.FragmentInputUangMasukBinding
 import com.notsatria.posapp.utils.ViewModelFactory
 import com.notsatria.posapp.utils.getCurrentTime
+import com.notsatria.posapp.utils.getImageUri
 import java.util.Date
 
 class EditUangMasukFragment : Fragment() {
@@ -25,6 +33,9 @@ class EditUangMasukFragment : Fragment() {
         ViewModelFactory.getInstance(requireContext())
     }
 
+    private var currentImageUri: Uri? = null
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,6 +45,7 @@ class EditUangMasukFragment : Fragment() {
         setupEditText()
         populateFieldsFromArgs()
         setupJenisClickListener()
+        setupIvPhoto()
         return binding.root
     }
 
@@ -102,6 +114,13 @@ class EditUangMasukFragment : Fragment() {
         val jenis = binding.etJenis.text.toString()
         val currentDate = Date()
 
+        currentImageUri?.let { uri ->
+            requireContext().contentResolver.releasePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+        }
+
         return if (dari.isNotEmpty() && masukKe.isNotEmpty() && jumlah.isNotEmpty() && keterangan.isNotEmpty() && jenis.isNotEmpty()) {
             try {
                 val id = arguments?.getInt("id", -1) ?: -1
@@ -114,6 +133,7 @@ class EditUangMasukFragment : Fragment() {
                     description = keterangan,
                     amount = jumlah.toInt(),
                     from = dari,
+                    imageUri = currentImageUri.toString(),
                 )
                 viewModel.updateTransaction(transaction)
                 Toast.makeText(requireContext(), "Data berhasil diperbarui", Toast.LENGTH_SHORT)
@@ -156,6 +176,101 @@ class EditUangMasukFragment : Fragment() {
 
         dialog.show()
     }
+
+    private fun setupEditAndDeletePhoto() {
+        if (currentImageUri != null) {
+            binding.apply {
+                ivPhoto.setOnClickListener {
+                    return@setOnClickListener
+                }
+                btnChangeImage.visibility = View.VISIBLE
+                btnDeleteImage.visibility = View.VISIBLE
+
+                btnChangeImage.setOnClickListener {
+                    showImageSourceDialog()
+                }
+
+                btnDeleteImage.setOnClickListener {
+                    currentImageUri = null
+                    ivPhoto.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.ic_photo
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun setupIvPhoto() {
+        binding.ivPhoto.setOnClickListener {
+            showImageSourceDialog()
+        }
+    }
+
+    private fun showImageSourceDialog() {
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_image_source, null)
+        val camera = dialogView.findViewById<LinearLayout>(R.id.btnCamera)
+        val gallery = dialogView.findViewById<LinearLayout>(R.id.btnGallery)
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        camera.setOnClickListener {
+            startCamera()
+            dialog.dismiss()
+        }
+
+        gallery.setOnClickListener {
+            startGallery()
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun startGallery() {
+        launcherGallery.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+    }
+
+    private fun startCamera() {
+        currentImageUri = getImageUri(requireContext())
+        launcherIntentCamera.launch(currentImageUri)
+    }
+
+    private val launcherGallery = registerForActivityResult(
+        PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            currentImageUri = uri
+            showImage()
+        } else
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.image_not_avaliable), Toast.LENGTH_SHORT
+            )
+    }
+
+    private val launcherIntentCamera = registerForActivityResult(
+        TakePicture()
+    ) { isSuccess ->
+        if (isSuccess) {
+            showImage()
+        }
+    }
+
+
+    private fun showImage() {
+        currentImageUri.let {
+            binding.ivPhoto.setImageURI(it)
+        }
+
+        setupEditAndDeletePhoto()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

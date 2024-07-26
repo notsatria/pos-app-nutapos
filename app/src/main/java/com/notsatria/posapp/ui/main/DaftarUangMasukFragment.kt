@@ -30,6 +30,8 @@ import com.notsatria.posapp.ui.inputuangmasuk.InputUangMasukFragment
 import com.notsatria.posapp.utils.ViewModelFactory
 import com.notsatria.posapp.utils.convertTimestampToString
 import com.notsatria.posapp.utils.formatRupiah
+import com.notsatria.posapp.utils.getEndOfDayInMillis
+import com.notsatria.posapp.utils.getStartOfDayInMillis
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -99,12 +101,11 @@ class DaftarUangMasukFragment : Fragment() {
         dateRangePicker.show(parentFragmentManager, "DateRangePicker")
 
         dateRangePicker.addOnPositiveButtonClickListener { selection ->
-            startDate = selection.first
-            endDate = selection.second
+            startDate = getStartOfDayInMillis(selection.first)
+            endDate = getEndOfDayInMillis(selection.second)
 
-            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-            val startDateString = sdf.format(startDate)
-            val endDateString = sdf.format(endDate)
+            val startDateString = convertTimestampToString(startDate!!)
+            val endDateString = convertTimestampToString(endDate!!)
 
             binding.tvDateRange.text = "$startDateString - $endDateString"
 
@@ -113,17 +114,19 @@ class DaftarUangMasukFragment : Fragment() {
     }
 
     private fun filterTransactions(startDate: Long, endDate: Long) {
-        viewModel.getTransactionsByDateRange(startDate, endDate).observe(viewLifecycleOwner) { transactions ->
-            if (transactions.isEmpty()) {
-                binding.rvDaftarUangMasuk.visibility = View.GONE
-                binding.tvEmpty!!.visibility = View.VISIBLE
-                binding.tvEmpty!!.text = "Data Kosong"
-            } else {
-                binding.rvDaftarUangMasuk.visibility = View.VISIBLE
-                binding.tvEmpty!!.visibility = View.GONE
-                showUangMasukRvPortrait(transactions)
+        println("Date range: $startDate - $endDate")
+        viewModel.getTransactionsByDateRange(startDate, endDate)
+            .observe(viewLifecycleOwner) { transactions ->
+                if (transactions.isEmpty()) {
+                    binding.rvDaftarUangMasuk.visibility = View.GONE
+                    binding.tvEmpty!!.visibility = View.VISIBLE
+                    binding.tvEmpty!!.text = "Data Kosong"
+                } else {
+                    binding.rvDaftarUangMasuk.visibility = View.VISIBLE
+                    binding.tvEmpty!!.visibility = View.GONE
+                    showUangMasukRvPortrait(transactions)
+                }
             }
-        }
     }
 
     private fun goToFragmentInputUangMasuk() {

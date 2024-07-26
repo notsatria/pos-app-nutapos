@@ -91,13 +91,6 @@ class InputUangMasukFragment : Fragment() {
         val jenis = binding.etJenis.text.toString()
         val currentDate = Date()
 
-        currentImageUri?.let { uri ->
-            requireContext().contentResolver.releasePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
-        }
-
         return if (dari.isNotEmpty() && masukKe.isNotEmpty() && jumlah.isNotEmpty() && keterangan.isNotEmpty() && jenis.isNotEmpty()) {
             try {
                 viewModel.insertTransaction(
@@ -220,6 +213,12 @@ class InputUangMasukFragment : Fragment() {
     ) { uri ->
         if (uri != null) {
             currentImageUri = uri
+            currentImageUri?.let { uri ->
+                requireContext().contentResolver.releasePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            }
             showImage()
         } else
             Toast.makeText(
