@@ -22,4 +22,10 @@ interface TransactionDao {
 
     @Query("SELECT * from `transaction` ORDER BY date ASC")
     fun getAllTransactions(): LiveData<List<TransactionEntity>>
+
+    @Query("SELECT * FROM `transaction` WHERE date BETWEEN :startDate AND :endDate ORDER BY date ASC")
+    fun getTransactionsByDateRange(
+        startDate: Long,
+        endDate: Long
+    ): LiveData<List<TransactionEntity>>
 }

@@ -33,6 +33,13 @@ class TransactionRepository private constructor(
         }
     }
 
+    fun getTransactionsByDateRange(
+        startDate: Long,
+        endDate: Long
+    ): LiveData<List<TransactionEntity>> {
+        return dao.getTransactionsByDateRange(startDate, endDate)
+    }
+
     companion object {
         fun getInstance(
             dao: TransactionDao,

@@ -1,5 +1,6 @@
 package com.notsatria.posapp.ui.main
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
@@ -12,6 +13,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.notsatria.posapp.R
 import com.notsatria.posapp.data.local.entity.TransactionEntity
@@ -26,6 +30,9 @@ import com.notsatria.posapp.ui.inputuangmasuk.InputUangMasukFragment
 import com.notsatria.posapp.utils.ViewModelFactory
 import com.notsatria.posapp.utils.convertTimestampToString
 import com.notsatria.posapp.utils.formatRupiah
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class DaftarUangMasukFragment : Fragment() {
@@ -37,6 +44,9 @@ class DaftarUangMasukFragment : Fragment() {
             requireContext()
         )
     }
+
+    private var startDate: Long? = null
+    private var endDate: Long? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,7 +72,58 @@ class DaftarUangMasukFragment : Fragment() {
             goToFragmentInputUangMasuk()
         }
 
+        binding.btnDatePicker?.setOnClickListener {
+            showDateRangePicker()
+        }
+
         return binding.root
+    }
+
+    private fun showDateRangePicker() {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, 2010)
+            set(Calendar.MONTH, Calendar.JANUARY)
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+        val minDate = calendar.timeInMillis
+
+        val dateRangePicker = MaterialDatePicker.Builder.dateRangePicker()
+            .setTitleText("Select Date Range")
+            .setCalendarConstraints(
+                CalendarConstraints.Builder()
+                    .setValidator(DateValidatorPointForward.from(minDate))
+                    .build()
+            )
+            .build()
+
+        dateRangePicker.show(parentFragmentManager, "DateRangePicker")
+
+        dateRangePicker.addOnPositiveButtonClickListener { selection ->
+            startDate = selection.first
+            endDate = selection.second
+
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+            val startDateString = sdf.format(startDate)
+            val endDateString = sdf.format(endDate)
+
+            binding.tvDateRange.text = "$startDateString - $endDateString"
+
+            filterTransactions(startDate!!, endDate!!)
+        }
+    }
+
+    private fun filterTransactions(startDate: Long, endDate: Long) {
+        viewModel.getTransactionsByDateRange(startDate, endDate).observe(viewLifecycleOwner) { transactions ->
+            if (transactions.isEmpty()) {
+                binding.rvDaftarUangMasuk.visibility = View.GONE
+                binding.tvEmpty!!.visibility = View.VISIBLE
+                binding.tvEmpty!!.text = "Data Kosong"
+            } else {
+                binding.rvDaftarUangMasuk.visibility = View.VISIBLE
+                binding.tvEmpty!!.visibility = View.GONE
+                showUangMasukRvPortrait(transactions)
+            }
+        }
     }
 
     private fun goToFragmentInputUangMasuk() {

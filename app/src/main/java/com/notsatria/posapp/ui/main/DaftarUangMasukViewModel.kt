@@ -11,4 +11,7 @@ class DaftarUangMasukViewModel(private val repository: TransactionRepository) : 
     fun getAllTransactions() = repository.getAllTransaction()
 
     fun deleteTransaction(transactionId: Int) = repository.deleteTransaction(transactionId)
+
+    fun getTransactionsByDateRange(startDate: Long, endDate: Long) =
+        repository.getTransactionsByDateRange(startDate, endDate)
 }

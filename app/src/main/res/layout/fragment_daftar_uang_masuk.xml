@@ -32,12 +32,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
-            android:text="25 Maret 2024 - 25 Maret 2024"
+            android:text="Semua Tanggal"
             android:textColor="@color/md_theme_primary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
         <ImageView
+            android:id="@+id/btnDatePicker"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginEnd="12dp"
