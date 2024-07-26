@@ -17,6 +17,7 @@ class InputUangMasukViewModel(private val repository: TransactionRepository) : V
         amount: Int,
         date: Long,
         type: String,
+        imageUri: String,
     ) {
         val transactionEntity = TransactionEntity(
             time = time,
@@ -25,7 +26,8 @@ class InputUangMasukViewModel(private val repository: TransactionRepository) : V
             description = description,
             amount = amount,
             date = date,
-            type = type
+            type = type,
+            imageUri = imageUri,
         )
 
         viewModelScope.launch(Dispatchers.IO) {

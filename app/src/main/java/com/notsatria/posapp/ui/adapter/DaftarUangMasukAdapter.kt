@@ -1,6 +1,7 @@
 package com.notsatria.posapp.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.notsatria.posapp.databinding.ItemUangMasukCardBinding
@@ -12,7 +13,8 @@ import com.notsatria.posapp.utils.formatRupiah
 class DaftarUangMasukAdapter(
     private val data: List<Any>,
     private val onDeleteClickListener: (Int) -> Unit,
-    private val onEditClickListener: (Item) -> Unit
+    private val onEditClickListener: (Item) -> Unit,
+    private val onLihatClickListener: (Item) -> Unit,
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -82,6 +84,14 @@ class DaftarUangMasukAdapter(
 
                 btnEdit.setOnClickListener {
                     onEditClickListener(item)
+                }
+
+                if (item.imageUri == "null") {
+                    btnLihatFoto.visibility = View.GONE
+                }
+
+                btnLihatFoto.setOnClickListener {
+                    onLihatClickListener(item)
                 }
             }
         }

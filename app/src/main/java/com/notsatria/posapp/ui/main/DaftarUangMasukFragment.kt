@@ -1,13 +1,18 @@
 package com.notsatria.posapp.ui.main
 
+import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.notsatria.posapp.R
 import com.notsatria.posapp.data.local.entity.TransactionEntity
 import com.notsatria.posapp.databinding.FragmentDaftarUangMasukBinding
@@ -106,11 +111,18 @@ class DaftarUangMasukFragment : Fragment() {
             )
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                 val data = mapTransactionsToDaftarUangMasuk(transactionList)
-                val rvAdapter = DaftarUangMasukAdapter(data, onDeleteClickListener = { itemId ->
-                    viewModel.deleteTransaction(itemId)
-                }, onEditClickListener = { item ->
-                    goToFragmentInputUangMasukWithData(item)
-                })
+                val rvAdapter = DaftarUangMasukAdapter(
+                    data,
+                    onDeleteClickListener = { itemId ->
+                        viewModel.deleteTransaction(itemId)
+                    },
+                    onEditClickListener = { item ->
+                        goToFragmentInputUangMasukWithData(item)
+                    },
+                    onLihatClickListener = { item ->
+                        showImageDialog(item.imageUri!!)
+                    },
+                )
 
                 adapter = rvAdapter
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -118,6 +130,31 @@ class DaftarUangMasukFragment : Fragment() {
                 adapter = TableAdapter(data)
             }
         }
+    }
+
+    private fun showImageDialog(imageUri: String) {
+        println("Image URI: $imageUri")
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_image, null)
+        val ivPhoto = dialogView.findViewById<ImageView>(R.id.ivImage)
+        val resolver = requireContext().contentResolver
+        val uri = Uri.parse(imageUri)
+
+        resolver.takePersistableUriPermission(
+            uri,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION
+        )
+
+        val bitmap = resolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it)
+        }
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        ivPhoto.setImageBitmap(bitmap)
+
+        dialog.show()
     }
 
 
@@ -149,6 +186,7 @@ class DaftarUangMasukFragment : Fragment() {
                 description = transaction.description!!,
                 amount = transaction.amount,
                 type = transaction.type!!,
+                imageUri = transaction.imageUri,
             )
             data.add(item)
 
@@ -187,6 +225,7 @@ class DaftarUangMasukFragment : Fragment() {
                 description = transaction.description!!,
                 amount = transaction.amount,
                 type = transaction.type!!,
+                imageUri = transaction.imageUri,
             )
             data.add(item)
 

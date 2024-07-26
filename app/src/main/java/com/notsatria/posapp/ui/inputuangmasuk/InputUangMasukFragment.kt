@@ -1,5 +1,6 @@
 package com.notsatria.posapp.ui.inputuangmasuk
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -90,6 +91,13 @@ class InputUangMasukFragment : Fragment() {
         val jenis = binding.etJenis.text.toString()
         val currentDate = Date()
 
+        currentImageUri?.let { uri ->
+            requireContext().contentResolver.releasePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+        }
+
         return if (dari.isNotEmpty() && masukKe.isNotEmpty() && jumlah.isNotEmpty() && keterangan.isNotEmpty() && jenis.isNotEmpty()) {
             try {
                 viewModel.insertTransaction(
@@ -99,7 +107,8 @@ class InputUangMasukFragment : Fragment() {
                     amount = jumlah.toInt(),
                     description = keterangan,
                     type = jenis,
-                    date = currentDate.time
+                    date = currentDate.time,
+                    imageUri = currentImageUri.toString()
                 )
                 Toast.makeText(requireContext(), "Data berhasil disimpan", Toast.LENGTH_SHORT)
                     .show()
@@ -227,16 +236,17 @@ class InputUangMasukFragment : Fragment() {
         }
     }
 
-    private fun showImage() {
-        currentImageUri.let {
-            binding.ivPhoto.setImageURI(it)
-        }
 
-        setupEditAndDeletePhoto()
+private fun showImage() {
+    currentImageUri.let {
+        binding.ivPhoto.setImageURI(it)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+    setupEditAndDeletePhoto()
+}
+
+override fun onDestroyView() {
+    super.onDestroyView()
+    _binding = null
+}
 }
